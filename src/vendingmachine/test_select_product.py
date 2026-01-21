@@ -1,3 +1,4 @@
+from collections import defaultdict
 from collections.abc import Generator
 
 import pytest
@@ -97,11 +98,14 @@ def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, but
     v = vending_machine
     product = v.select_product(button)
     coin_in_sequence = fewest_coins_that_match_exact_price(price)
+    coins_inserted = defaultdict(int)
     while v.check_display() != "THANK YOU":
         coin = next(coin_in_sequence)
+        coins_inserted[coin] += 1
         v.insert_coin(coin)
         v.select_product(button)
     assert v.check_display() == "INSERT COIN"
     assert v.hopper == [product]
     assert v.current_amount == 0
     assert v.selected_product is None
+    assert v.coin_box == coins_inserted
