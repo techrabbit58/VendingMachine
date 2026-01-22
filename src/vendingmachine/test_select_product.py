@@ -97,13 +97,13 @@ def fewest_coins_that_match_exact_price(remaining: int) -> Generator[str]:
 def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, button, price):
     v = vending_machine
     product = v.select_product(button)
-    coin_in_sequence = fewest_coins_that_match_exact_price(price)
+    coins_in_sequence = fewest_coins_that_match_exact_price(price)
     coins_inserted = defaultdict(int)
-    while v.check_display() != "THANK YOU":
-        coin = next(coin_in_sequence)
+    for coin in coins_in_sequence:
         coins_inserted[coin] += 1
         v.insert_coin(coin)
         v.select_product(button)
+    assert v.check_display() == "THANK YOU"
     assert v.check_display() == "INSERT COIN"
     assert v.hopper == [product]
     assert v.current_amount == 0
