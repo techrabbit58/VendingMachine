@@ -59,4 +59,8 @@ class VendingMachine:
             self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
 
     def return_coins(self) -> None:
-        ...
+        self.coin_return.extend(self.coin_buffer)
+        self.coin_buffer.clear()
+        self.selected_product = None
+        self.current_amount = 0
+        self._update_display()
