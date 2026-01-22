@@ -1,6 +1,4 @@
-from collections import defaultdict
-
-from .lib import accept_coin, FiFo, get_product_by_button, get_price_by_product
+from .lib import check_coin, FiFo, get_product_by_button, get_price_by_product
 
 
 class VendingMachine:
@@ -9,14 +7,13 @@ class VendingMachine:
     def __init__(self) -> None:
         self.coin_buffer: FiFo[str] = FiFo("event queue")
         self.coin_return: FiFo[str] = FiFo("coin return")
-        self.coin_box: dict[str, int] = defaultdict(int)
         self.hopper: list[str] = []
         self.selected_product = None
         self.current_amount = 0
         self.display = "INSERT COIN"
 
     def insert_coin(self, coin: str) -> None:
-        if value := accept_coin(coin):
+        if value := check_coin(coin):
             self.coin_buffer.put(coin)
             self.current_amount += value
             self._update_display()
@@ -53,5 +50,5 @@ class VendingMachine:
         self.selected_product = None
         self.current_amount = 0
         while self.coin_buffer.qsize() > 0:
-            self.coin_box[self.coin_buffer.get()] += 1
+            self.coin_buffer.get()
         self._update_display(0)

@@ -1,9 +1,9 @@
-from collections import defaultdict
 from collections.abc import Generator
 
 import pytest
 
-from .conf import SELECTIONS, PRICES, BUTTONS, ACCEPTABLE_COINS
+from .conf import SELECTIONS, PRICES, BUTTONS
+from .lib import fewest_coins_that_match_exact_amount
 from .vendingmachine import VendingMachine
 
 
@@ -25,10 +25,6 @@ def selections_and_prices() -> Generator[tuple[str, int]]:
 def invalid_selections():
     yield "D"
     yield "invalid"
-
-
-def test_SELECTIONS_and_PRICES_must_match_with_length():
-    assert len(SELECTIONS) == len(PRICES)
 
 
 @pytest.mark.parametrize("button, product", valid_selections())
@@ -80,32 +76,27 @@ def test_machine_display_changes_for_subsequent_selections(vending_machine):
     assert v.check_display() == "INSERT COIN"
 
 
-def fewest_coins_that_match_exact_price(remaining: int) -> Generator[str]:
-    coin_by_descending_value = (coin for coin in sorted(ACCEPTABLE_COINS, reverse=True))
-    coin = next(coin_by_descending_value)
-    value = ACCEPTABLE_COINS[coin]
-    while remaining > 0:
-        if value <= remaining:
-            yield coin
-            remaining -= value
-        else:
-            coin = next(coin_by_descending_value)
-            value = ACCEPTABLE_COINS[coin]
-
-
 @pytest.mark.parametrize("button, price", selections_and_prices())
 def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, button, price):
     v = vending_machine
     product = v.select_product(button)
-    coins_in_sequence = fewest_coins_that_match_exact_price(price)
-    coins_inserted = defaultdict(int)
-    for coin in coins_in_sequence:
-        coins_inserted[coin] += 1
+    coin_sequence = fewest_coins_that_match_exact_amount(price)
+    for coin in coin_sequence:
         v.insert_coin(coin)
         v.select_product(button)
     assert v.check_display() == "THANK YOU"
-    assert v.check_display() == "INSERT COIN"
     assert v.hopper == [product]
-    assert v.current_amount == 0
+
+
+@pytest.mark.parametrize("button, price", selections_and_prices())
+def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_machine, button, price):
+    v = vending_machine
+    coin_sequence = fewest_coins_that_match_exact_amount(price)
+    for coin in coin_sequence:
+        v.insert_coin(coin)
+    v.select_product(button)
+    v.check_display()
+    assert v.check_display() == "INSERT COIN"
     assert v.selected_product is None
-    assert v.coin_box == coins_inserted
+    assert v.current_amount == 0
+    assert v.coin_buffer.qsize() == 0

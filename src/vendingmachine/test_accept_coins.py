@@ -4,7 +4,7 @@ from collections.abc import Generator
 import pytest
 
 from vendingmachine.conf import ACCEPTABLE_COINS
-from vendingmachine.lib import accept_coin
+from vendingmachine.lib import check_coin
 from vendingmachine.vendingmachine import VendingMachine
 
 
@@ -24,12 +24,12 @@ def invalid_coins() -> Generator[str]:
 
 @pytest.mark.parametrize("actual_coin, expected_result", valid_coins_and_values())
 def test_coin_acceptor_accepts_valid_coins(actual_coin, expected_result):
-    assert accept_coin(actual_coin) == expected_result
+    assert check_coin(actual_coin) == expected_result
 
 
 @pytest.mark.parametrize("actual_coin", invalid_coins())
 def test_coin_acceptor_rejects_invalid_coins(actual_coin):
-    assert not accept_coin(actual_coin)
+    assert not check_coin(actual_coin)
 
 
 @pytest.mark.parametrize("actual_coin, expected_result", valid_coins_and_values())
