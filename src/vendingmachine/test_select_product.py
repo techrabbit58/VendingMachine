@@ -4,27 +4,21 @@ import pytest
 
 from .conf import SELECTIONS, PRICES, BUTTONS
 from .lib import fewest_coins_that_match_exact_amount
-from .vendingmachine import VendingMachine
-
-
-@pytest.fixture
-def vending_machine() -> VendingMachine:
-    return VendingMachine()
 
 
 def valid_selections() -> Generator[dict[str, str]]:
     yield from SELECTIONS.items()
 
 
-def selections_and_prices() -> Generator[tuple[str, int]]:
-    for button, product in SELECTIONS.items():
-        price = PRICES[product]
-        yield button, price
-
-
 def invalid_selections():
     yield "D"
     yield "invalid"
+
+
+def button_and_price() -> Generator[tuple[str, int]]:
+    for button, product in SELECTIONS.items():
+        price = PRICES[product]
+        yield button, price
 
 
 @pytest.mark.parametrize("button, product", valid_selections())
@@ -41,14 +35,14 @@ def test_invalid_buttons_selects_None(vending_machine, button):
     assert v.selected_product is None
 
 
-@pytest.mark.parametrize("button, price", selections_and_prices())
+@pytest.mark.parametrize("button, price", button_and_price())
 def test_machine_displays_PRICE_for_selected_product(vending_machine, button, price):
     v = vending_machine
     v.select_product(button)
     assert v.check_display() == f"PRICE ${price / 100:.2f}"
 
 
-@pytest.mark.parametrize("button, price", selections_and_prices())
+@pytest.mark.parametrize("button, price", button_and_price())
 def test_mch_no_coins_reverts_to_INSERT_COIN_if_display_checked_multiple(vending_machine, button, price):
     v = vending_machine
     v.select_product(button)
@@ -57,7 +51,7 @@ def test_mch_no_coins_reverts_to_INSERT_COIN_if_display_checked_multiple(vending
     assert v.check_display() == "INSERT COIN"
 
 
-@pytest.mark.parametrize("button, price", selections_and_prices())
+@pytest.mark.parametrize("button, price", button_and_price())
 def test_mch_with_small_amount_reverts_to_previous_if_display_checked_multiple(vending_machine, button, price):
     v = vending_machine
     v.current_amount = 1
@@ -76,7 +70,7 @@ def test_machine_display_changes_for_subsequent_selections(vending_machine):
     assert v.check_display() == "INSERT COIN"
 
 
-@pytest.mark.parametrize("button, price", selections_and_prices())
+@pytest.mark.parametrize("button, price", button_and_price())
 def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, button, price):
     v = vending_machine
     product = v.select_product(button)
@@ -88,7 +82,7 @@ def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, but
     assert v.hopper == [product]
 
 
-@pytest.mark.parametrize("button, price", selections_and_prices())
+@pytest.mark.parametrize("button, price", button_and_price())
 def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_machine, button, price):
     v = vending_machine
     coin_sequence = fewest_coins_that_match_exact_amount(price)
@@ -99,4 +93,4 @@ def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_mach
     assert v.check_display() == "INSERT COIN"
     assert v.selected_product is None
     assert v.current_amount == 0
-    assert v.coin_buffer.qsize() == 0
+    assert len(v.coin_buffer) == 0

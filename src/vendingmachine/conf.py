@@ -1,5 +1,3 @@
-from enum import IntEnum
-
 ACCEPTABLE_COINS = {
     "nickel": 5,
     "dime": 10,

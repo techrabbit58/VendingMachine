@@ -4,13 +4,8 @@ from collections.abc import Generator
 import pytest
 
 from vendingmachine.conf import ACCEPTABLE_COINS
+from vendingmachine.conftest import vending_machine
 from vendingmachine.lib import check_coin
-from vendingmachine.vendingmachine import VendingMachine
-
-
-@pytest.fixture
-def vending_machine() -> VendingMachine:
-    return VendingMachine()
 
 
 def valid_coins_and_values() -> Generator[tuple[str, int]]:
@@ -36,14 +31,14 @@ def test_coin_acceptor_rejects_invalid_coins(actual_coin):
 def test_vending_machine_accepts_valid_coins(vending_machine, actual_coin, expected_result):
     v = vending_machine
     v.insert_coin(actual_coin)
-    assert v.coin_buffer.qsize() > 0 and v.coin_buffer.get() == actual_coin
+    assert len(v.coin_buffer) > 0 and v.coin_buffer[0] == actual_coin
 
 
 @pytest.mark.parametrize("actual_coin", invalid_coins())
 def test_vending_machine_sends_rejected_coins_to_the_coin_return(vending_machine, actual_coin):
     v = vending_machine
     v.insert_coin(actual_coin)
-    assert v.coin_return.qsize() > 0 and v.coin_return.get() == actual_coin
+    assert len(v.coin_return) > 0 and v.coin_return[0] == actual_coin
 
 
 @pytest.mark.parametrize(
@@ -80,4 +75,4 @@ def test_invalid_coin_return_does_no_change_state(vending_machine, first_coin, s
         v.insert_coin(first_coin)
     old_state = v.current_amount, v.check_display()
     v.insert_coin(second_coin)
-    assert (v.current_amount, v.check_display()) == old_state and v.coin_return.qsize() > 0
+    assert (v.current_amount, v.check_display()) == old_state and len(v.coin_return) > 0

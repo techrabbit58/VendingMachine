@@ -1,12 +1,12 @@
-from .lib import check_coin, FiFo, get_product_by_button, get_price_by_product
+from .lib import check_coin, get_product_by_button, get_price_by_product, coin_sum, fewest_coins_that_match_exact_amount
 
 
 class VendingMachine:
     """Vending Machine Simulator"""
 
     def __init__(self) -> None:
-        self.coin_buffer: FiFo[str] = FiFo("event queue")
-        self.coin_return: FiFo[str] = FiFo("coin return")
+        self.coin_buffer: list[str] = []
+        self.coin_return: list[str] = []
         self.hopper: list[str] = []
         self.selected_product = None
         self.current_amount = 0
@@ -14,11 +14,11 @@ class VendingMachine:
 
     def insert_coin(self, coin: str) -> None:
         if value := check_coin(coin):
-            self.coin_buffer.put(coin)
+            self.coin_buffer.append(coin)
             self.current_amount += value
             self._update_display()
         else:
-            self.coin_return.put(coin)
+            self.coin_return.append(coin)
 
     def select_product(self, button: str) -> str:
         self.selected_product = product = get_product_by_button(button)
@@ -28,6 +28,8 @@ class VendingMachine:
             self.selected_product = None
         else:
             self._dispense()
+            self._make_change(price)
+            self.coin_buffer.clear()
         return product
 
     def check_display(self) -> str:
@@ -40,7 +42,7 @@ class VendingMachine:
             self.display = "THANK YOU"
         elif price is not None and price > 0:
             self.display = f"PRICE ${price / 100:.2f}"
-        elif self.coin_buffer.qsize() > 0:
+        elif len(self.coin_buffer) > 0:
             self.display = f"${self.current_amount / 100:.2f}"
         else:
             self.display = "INSERT COIN"
@@ -49,6 +51,10 @@ class VendingMachine:
         self.hopper.append(self.selected_product)
         self.selected_product = None
         self.current_amount = 0
-        while self.coin_buffer.qsize() > 0:
-            self.coin_buffer.get()
         self._update_display(0)
+
+    def _make_change(self, price: int) -> None:
+        change = coin_sum(self.coin_buffer) - price
+        if change > 0:
+            self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
+
