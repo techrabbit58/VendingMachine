@@ -2,7 +2,7 @@
 
 ## Task Summary
 * Create the core logic of a vending machine.
-* Develop the code feature by feature:
+* Develop feature by feature:
   1. accept coins :heavy_check_mark:
   2. select product :heavy_check_mark:
   3. make change :heavy_check_mark:
