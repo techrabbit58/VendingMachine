@@ -1,7 +1,7 @@
 import pytest
 
-from vendingmachine.conf import SELECTIONS, PRICES, ACCEPTABLE_COINS
-from vendingmachine.lib import fewest_coins_that_match_exact_amount
+from .conf import SELECTIONS, PRICES, ACCEPTABLE_COINS
+from .lib import fewest_coins_that_match_exact_amount
 
 
 def test_SELECTIONS_and_PRICES_must_match_in_length():

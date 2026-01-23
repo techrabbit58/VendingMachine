@@ -7,7 +7,7 @@
   2. select product :heavy_check_mark:
   3. make change :heavy_check_mark:
   4. return coins :heavy_check_mark:
-  5. sold out :cloud:
+  5. sold out :heavy_check_mark:
   6. exact change only :cloud:
 
 ## Reference

@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import SELECTIONS, PRICES, BUTTONS
+from .conf import SELECTIONS, PRICES, BUTTONS, CURRENCY
 from .lib import fewest_coins_that_match_exact_amount
 
 
@@ -39,7 +39,7 @@ def test_invalid_buttons_selects_None(vending_machine, button):
 def test_machine_displays_PRICE_for_selected_product(vending_machine, button, price):
     v = vending_machine
     v.select_product(button)
-    assert v.check_display() == f"PRICE ${price / 100:.2f}"
+    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
 
 
 @pytest.mark.parametrize("button, price", button_and_price())
@@ -47,7 +47,7 @@ def test_mch_no_coins_reverts_to_INSERT_COIN_if_display_checked_multiple(vending
     v = vending_machine
     v.select_product(button)
     assert v.selected_product is None
-    assert v.check_display() == f"PRICE ${price / 100:.2f}"
+    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
     assert v.check_display() == "INSERT COIN"
 
 
@@ -58,7 +58,7 @@ def test_mch_with_small_amount_reverts_to_previous_if_display_checked_multiple(v
     first_display = v.check_display()
     v.select_product(button)
     assert v.selected_product is None
-    assert v.check_display() == f"PRICE ${price / 100:.2f}"
+    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
     assert v.check_display() == first_display
 
 
@@ -66,7 +66,7 @@ def test_machine_display_changes_for_subsequent_selections(vending_machine):
     v = vending_machine
     for button in BUTTONS:
         product = v.select_product(button)
-        assert v.check_display() == f"PRICE ${PRICES[product] / 100:.2f}"
+        assert v.check_display() == f"PRICE {CURRENCY}{PRICES[product] / 100:.2f}"
     assert v.check_display() == "INSERT COIN"
 
 

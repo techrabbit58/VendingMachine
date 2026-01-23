@@ -7,6 +7,7 @@ ACCEPTABLE_COINS = {
 BUTTONS = ("A", "B", "C")
 PRODUCTS = ("cola", "chips", "candy")
 PRICE_POINTS = (100, 50, 65)
+CURRENCY = "EUR "
 
 SELECTIONS = dict(zip(BUTTONS, PRODUCTS))
 PRICES = dict(zip(PRODUCTS, PRICE_POINTS))

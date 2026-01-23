@@ -1,10 +1,7 @@
-import queue
-import sys
-from collections import deque
 from functools import cache
 from typing import Generator
 
-from .conf import ACCEPTABLE_COINS, SELECTIONS, PRICES
+from .conf import ACCEPTABLE_COINS, SELECTIONS, PRICES, PRODUCTS, CURRENCY
 
 
 @cache
@@ -22,6 +19,10 @@ def get_price_by_product(product: str) -> int:
     return PRICES.get(product, 0)
 
 
+def get_all_products() -> Generator[str]:
+    yield from PRODUCTS
+
+
 def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
     coin_by_descending_value = (coin[0] for coin in sorted(ACCEPTABLE_COINS.items(), reverse=True, key=lambda x: x[1]))
     coin = next(coin_by_descending_value)
@@ -37,3 +38,7 @@ def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
 
 def coin_sum(coins: list[str]) -> int:
     return sum(ACCEPTABLE_COINS[coin] for coin in coins)
+
+
+def get_currency() -> str:
+    return CURRENCY

@@ -1,4 +1,4 @@
-from vendingmachine.conf import ACCEPTABLE_COINS
+from .conf import ACCEPTABLE_COINS
 
 
 def test_return_coins_on_return_button_pressed(vending_machine):
