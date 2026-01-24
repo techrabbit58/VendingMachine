@@ -29,21 +29,30 @@ class VendingMachine:
 
     def select_product(self, button: str) -> str | None:
         self.selected_product = product = get_product_by_button(button)
+
         if self._is_sold_out(product):
             self._update_display(self.SOLD_OUT)
             self.selected_product = None
             return None
+
         price = get_price_by_product(self.selected_product)
         self._update_display(price)
+
+        # TODO: do not dispense if the machine does not have enough coins in it's box and buffer
         if self.current_amount < price:
             self.selected_product = None
-        else:
-            self._dispense()
-            self._make_change(price)
-            for coin in self.coin_buffer:
-                self.coin_box[coin] += self.coin_buffer[coin]
-                self.coin_buffer[coin] = 0
+            return product
+
+        self._dispense()
+        self._make_change(price)
+        self._collect_coins_from_buffer()
+
         return product
+
+    def _collect_coins_from_buffer(self) -> None:
+        for coin in self.coin_buffer:
+            self.coin_box[coin] += self.coin_buffer[coin]
+            self.coin_buffer[coin] = 0
 
     def check_display(self) -> str:
         display = self.display
@@ -60,6 +69,7 @@ class VendingMachine:
         elif coin_sum(self.coin_buffer) > 0:
             self.display = f"{get_currency()}{self.current_amount / 100:.2f}"
         else:
+            # TODO: show EXACT CHANGE ONLY instead of INSERT COIN for the "exact change" feature
             self.display = "INSERT COIN"
 
     def _dispense(self) -> None:
@@ -72,15 +82,19 @@ class VendingMachine:
     def _make_change(self, price: int) -> None:
         change = coin_sum(self.coin_buffer) - price
         if change > 0:
+            # TODO: change still infinite, must be updated for the "exact change" feature
             self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
 
     def return_coins(self) -> None:
-        for coin in self.coin_buffer:
-            self.coin_return.extend([coin] * self.coin_buffer[coin])
-            self.coin_buffer[coin] = 0
+        self._return_coins_from_buffer()
         self.selected_product = None
         self.current_amount = 0
         self._update_display()
+
+    def _return_coins_from_buffer(self) -> None:
+        for coin in self.coin_buffer:
+            self.coin_return.extend([coin] * self.coin_buffer[coin])
+            self.coin_buffer[coin] = 0
 
     def _is_sold_out(self, product: str) -> bool:
         return self.stock.get(product, 0) == 0
