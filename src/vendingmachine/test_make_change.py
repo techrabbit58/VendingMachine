@@ -1,6 +1,6 @@
 import pytest
 
-from .conf import BUTTONS, PRICE_POINTS, COINS, VALUES
+from .conf import BUTTONS, PRICES, COINS, VALUES
 from .lib import fewest_coins_that_match_exact_amount, coin_sum, get_coin_by_value
 
 
@@ -15,7 +15,7 @@ def overpaid(price: int) -> list[str]:
     return coin_sequence
 
 
-@pytest.mark.parametrize("button, price", zip(BUTTONS, PRICE_POINTS))
+@pytest.mark.parametrize("button, price", zip(BUTTONS, PRICES))
 def test_machine_returns_correct_change_on_sale(vending_machine, button, price):
     v = vending_machine
     coin_sequence = overpaid(price)

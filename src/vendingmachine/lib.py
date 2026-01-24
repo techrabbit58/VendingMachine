@@ -2,7 +2,7 @@ from functools import cache
 from operator import itemgetter
 from typing import Generator
 
-from .conf import COINS, VALUES, PRODUCTS, CURRENCY, PRICE_POINTS, BUTTONS
+from .conf import COINS, VALUES, PRODUCTS, CURRENCY, PRICES, BUTTONS
 
 
 @cache
@@ -29,7 +29,7 @@ def get_price_by_product(product: str) -> int:
     price = 0
     for i, p in enumerate(PRODUCTS):
         if p == product:
-            price = PRICE_POINTS[i]
+            price = PRICES[i]
             break
     return price
 

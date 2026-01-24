@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import BUTTONS, CURRENCY, PRICE_POINTS, PRODUCTS
+from .conf import BUTTONS, CURRENCY, PRICES, PRODUCTS
 from .lib import fewest_coins_that_match_exact_amount, get_price_by_product
 
 
@@ -18,7 +18,7 @@ def invalid_selections():
 
 def button_and_price() -> Generator[tuple[str, int]]:
     for i, button in enumerate(BUTTONS):
-        price = PRICE_POINTS[i]
+        price = PRICES[i]
         yield button, price
 
 
