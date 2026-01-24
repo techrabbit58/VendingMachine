@@ -22,7 +22,7 @@ def invalid_coins() -> Generator[str]:
 def test_vending_machine_accepts_valid_coins(vending_machine, actual_coin, expected_result):
     v = vending_machine
     v.insert_coin(actual_coin)
-    assert len(v.coin_buffer) > 0 and v.coin_buffer[0] == actual_coin
+    assert len(v.coin_buffer) > 0 and v.coin_buffer[actual_coin] == 1
 
 
 @pytest.mark.parametrize("actual_coin", invalid_coins())
@@ -36,7 +36,7 @@ def test_vending_machine_rejects_invalid_coins(vending_machine, actual_coin):
 def test_vending_machine_accumulates_inserted_coin_values(vending_machine, coins):
     for coin in coins:
         vending_machine.insert_coin(coin)
-    assert vending_machine.current_amount == coin_sum(coins)
+    assert vending_machine.current_amount == coin_sum(vending_machine.coin_buffer)
 
 
 def test_idle_vending_machine_displays_INSERT_COIN(vending_machine):

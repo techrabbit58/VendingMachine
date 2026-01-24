@@ -1,6 +1,7 @@
 from .lib import (
     check_coin, get_product_by_button, get_price_by_product, coin_sum,
-    fewest_coins_that_match_exact_amount, get_all_products, get_currency
+    fewest_coins_that_match_exact_amount, get_all_products, get_currency,
+    get_acceptable_coins
 )
 
 
@@ -9,17 +10,18 @@ class VendingMachine:
     SOLD_OUT = -1
 
     def __init__(self) -> None:
-        self.coin_buffer: list[str] = []
+        self.coin_buffer = dict.fromkeys(get_acceptable_coins(), 0)
         self.coin_return: list[str] = []
         self.hopper: list[str] = []
         self.selected_product = None
         self.current_amount = 0
         self.display = "INSERT COIN"
         self.stock = {}
+        self.coin_box = dict.fromkeys(get_acceptable_coins(), 0)
 
     def insert_coin(self, coin: str) -> None:
         if value := check_coin(coin):
-            self.coin_buffer.append(coin)
+            self.coin_buffer[coin] += 1
             self.current_amount += value
             self._update_display()
         else:
@@ -38,7 +40,10 @@ class VendingMachine:
         else:
             self._dispense()
             self._make_change(price)
-            self.coin_buffer.clear()
+            for coin in self.coin_buffer:
+                self.coin_box[coin] += self.coin_buffer[coin]
+                self.coin_buffer[coin] = 0
+            print(self.coin_buffer)
         return product
 
     def check_display(self) -> str:
@@ -53,7 +58,7 @@ class VendingMachine:
             self.display = "THANK YOU"
         elif price is not None and price > 0:
             self.display = f"PRICE {get_currency()}{price / 100:.2f}"
-        elif len(self.coin_buffer) > 0:
+        elif coin_sum(self.coin_buffer) > 0:
             self.display = f"{get_currency()}{self.current_amount / 100:.2f}"
         else:
             self.display = "INSERT COIN"
@@ -71,8 +76,9 @@ class VendingMachine:
             self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
 
     def return_coins(self) -> None:
-        self.coin_return.extend(self.coin_buffer)
-        self.coin_buffer.clear()
+        for coin in self.coin_buffer:
+            self.coin_return.append(coin)
+            self.coin_buffer[coin] = 0
         self.selected_product = None
         self.current_amount = 0
         self._update_display()

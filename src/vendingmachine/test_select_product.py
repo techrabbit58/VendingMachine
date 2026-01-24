@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 
 from .conf import BUTTONS, CURRENCY, PRICES, PRODUCTS
-from .lib import fewest_coins_that_match_exact_amount, get_price_by_product
+from .lib import fewest_coins_that_match_exact_amount, get_price_by_product, coin_sum
 
 
 def valid_selections() -> Generator[tuple[str, str]]:
@@ -94,4 +94,4 @@ def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_mach
     assert v.check_display() == "INSERT COIN"
     assert v.selected_product is None
     assert v.current_amount == 0
-    assert len(v.coin_buffer) == 0
+    assert coin_sum(v.coin_buffer) == 0

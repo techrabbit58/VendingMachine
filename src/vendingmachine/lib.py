@@ -45,7 +45,7 @@ def get_coin_value(coin: str) -> int:
 
 
 @cache
-def get_coin_by_value(value: int) -> str | None:
+def get_coin_name_by_value(value: int) -> str | None:
     coin = None
     for i, v in enumerate(VALUES):
         if v == value:
@@ -56,6 +56,10 @@ def get_coin_by_value(value: int) -> str | None:
 
 def get_all_products() -> Generator[str]:
     yield from PRODUCTS
+
+
+def get_acceptable_coins() -> Generator[str]:
+    yield from COINS
 
 
 def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
@@ -71,8 +75,8 @@ def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
             value = get_coin_value(coin)
 
 
-def coin_sum(coins: list[str]) -> int:
-    return sum(get_coin_value(coin) for coin in coins)
+def coin_sum(coins: dict[str, int]) -> int:
+    return sum(get_coin_value(coin) * count for coin, count in coins.items())
 
 
 def get_currency() -> str:
