@@ -43,7 +43,6 @@ class VendingMachine:
             for coin in self.coin_buffer:
                 self.coin_box[coin] += self.coin_buffer[coin]
                 self.coin_buffer[coin] = 0
-            print(self.coin_buffer)
         return product
 
     def check_display(self) -> str:
