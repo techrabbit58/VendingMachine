@@ -1,0 +1,34 @@
+{
+  "coins": [
+    {
+      "name": "nickel",
+      "value": 5
+    },
+    {
+      "name": "dime",
+      "value": 10
+    },
+    {
+      "name": "quarter",
+      "value": 25
+    }
+  ],
+  "products": [
+    {
+      "name": "cola",
+      "price": 100,
+      "button": "A"
+    },
+    {
+      "name": "chips",
+      "price": 50,
+      "button": "B"
+    },
+    {
+      "name": "candy",
+      "price": 65,
+      "button": "c"
+    }
+  ],
+  "currency": "$"
+}

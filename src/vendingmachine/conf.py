@@ -1,8 +1,13 @@
-COINS = ("nickel", "dime", "quarter")
-VALUES = (5, 10, 25)
+import json
+from pathlib import Path
 
-BUTTONS = ("A", "B", "C")
-PRODUCTS = ("cola", "chips", "candy")
-PRICE_POINTS = (100, 50, 65)
+configuration = json.load(Path(__file__).with_suffix(".json").open())
 
-CURRENCY = "$"
+COINS = tuple(coin["name"] for coin in configuration["coins"])
+VALUES = tuple(coin["value"] for coin in configuration["coins"])
+
+PRODUCTS = tuple(product["name"] for product in configuration["products"])
+PRICE_POINTS = tuple(product["price"] for product in configuration["products"])
+BUTTONS = tuple(product["button"] for product in configuration["products"])
+
+CURRENCY = configuration["currency"]
