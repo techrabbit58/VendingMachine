@@ -117,12 +117,8 @@ name = "vendingmachine"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "pytest" },
     { name = "pytest-cov" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=7.0.0" },
-]
+requires-dist = [{ name = "pytest-cov", specifier = ">=7.0.0" }]
