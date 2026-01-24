@@ -76,7 +76,7 @@ class VendingMachine:
 
     def return_coins(self) -> None:
         for coin in self.coin_buffer:
-            self.coin_return.append(coin)
+            self.coin_return.extend([coin] * self.coin_buffer[coin])
             self.coin_buffer[coin] = 0
         self.selected_product = None
         self.current_amount = 0
