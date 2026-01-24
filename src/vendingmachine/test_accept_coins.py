@@ -3,13 +3,14 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import ACCEPTABLE_COINS, CURRENCY
+from .conf import CURRENCY, COINS, VALUES
 from .conftest import vending_machine
 from .lib import coin_sum
 
 
 def valid_coins_and_values() -> Generator[tuple[str, int]]:
-    yield from ACCEPTABLE_COINS.items()
+    for i, coin in enumerate(COINS):
+        yield coin, VALUES[i]
 
 
 def invalid_coins() -> Generator[str]:
@@ -31,7 +32,7 @@ def test_vending_machine_rejects_invalid_coins(vending_machine, actual_coin):
     assert len(v.coin_return) > 0 and v.coin_return[0] == actual_coin
 
 
-@pytest.mark.parametrize("coins", itertools.permutations(ACCEPTABLE_COINS))
+@pytest.mark.parametrize("coins", itertools.permutations(COINS))
 def test_vending_machine_accumulates_inserted_coin_values(vending_machine, coins):
     for coin in coins:
         vending_machine.insert_coin(coin)

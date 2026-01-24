@@ -1,9 +1,9 @@
-from .conf import ACCEPTABLE_COINS
+from .conf import COINS
 
 
 def test_return_coins_on_return_button_pressed(vending_machine):
     v = vending_machine
-    coins = list(ACCEPTABLE_COINS.keys())
+    coins = list(COINS)
     for coin in coins:
         v.insert_coin(coin)
     assert v.coin_buffer == coins, "coins in buffer (before)"

@@ -1,15 +1,9 @@
-import pytest
-
-from .conf import SELECTIONS, PRICES, ACCEPTABLE_COINS
-from .lib import fewest_coins_that_match_exact_amount
+from .conf import COINS, VALUES, BUTTONS, PRODUCTS, PRICE_POINTS
 
 
-def test_SELECTIONS_and_PRICES_must_match_in_length():
-    assert len(SELECTIONS) == len(PRICES)
+def test_COINS_and_VALUES_must_be_same_length():
+    assert len(COINS) == len(VALUES)
 
 
-@pytest.mark.parametrize("price", PRICES.values())
-def test_every_product_price_must_be_put_together_from_acceptable_coins(price):
-    coin_sequence = fewest_coins_that_match_exact_amount(price)
-    coin_sum = sum(ACCEPTABLE_COINS[coin] for coin in coin_sequence)
-    assert coin_sum == price
+def test_BUTTONS_PRODUCTS_and_PRICE_POINTS_must_be_same_length():
+    assert len(BUTTONS) == len(PRODUCTS) == len(PRICE_POINTS)

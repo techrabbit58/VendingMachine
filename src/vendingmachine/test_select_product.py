@@ -2,12 +2,13 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import SELECTIONS, PRICES, BUTTONS, CURRENCY
-from .lib import fewest_coins_that_match_exact_amount
+from .conf import BUTTONS, CURRENCY, PRICE_POINTS, PRODUCTS
+from .lib import fewest_coins_that_match_exact_amount, get_price_by_product
 
 
-def valid_selections() -> Generator[dict[str, str]]:
-    yield from SELECTIONS.items()
+def valid_selections() -> Generator[tuple[str, str]]:
+    for i, button in enumerate(BUTTONS):
+        yield button, PRODUCTS[i]
 
 
 def invalid_selections():
@@ -16,8 +17,8 @@ def invalid_selections():
 
 
 def button_and_price() -> Generator[tuple[str, int]]:
-    for button, product in SELECTIONS.items():
-        price = PRICES[product]
+    for i, button in enumerate(BUTTONS):
+        price = PRICE_POINTS[i]
         yield button, price
 
 
@@ -66,7 +67,7 @@ def test_machine_display_changes_for_subsequent_selections(vending_machine):
     v = vending_machine
     for button in BUTTONS:
         product = v.select_product(button)
-        assert v.check_display() == f"PRICE {CURRENCY}{PRICES[product] / 100:.2f}"
+        assert v.check_display() == f"PRICE {CURRENCY}{get_price_by_product(product) / 100:.2f}"
     assert v.check_display() == "INSERT COIN"
 
 

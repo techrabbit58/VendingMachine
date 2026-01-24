@@ -1,11 +1,12 @@
 import pytest
 
-from .conf import BUTTONS, PRICE_POINTS, ACCEPTABLE_COINS
-from .lib import fewest_coins_that_match_exact_amount, coin_sum
+from .conf import BUTTONS, PRICE_POINTS, COINS, VALUES
+from .lib import fewest_coins_that_match_exact_amount, coin_sum, get_coin_by_value
 
 
 def overpaid(price: int) -> list[str]:
-    coin, value = max(ACCEPTABLE_COINS.items(), key=lambda x: x[1])
+    value = max(VALUES)
+    coin = get_coin_by_value(value)
     coin_sequence = []
     amount = 0
     while amount <= price:

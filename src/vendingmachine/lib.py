@@ -1,22 +1,57 @@
 from functools import cache
+from operator import itemgetter
 from typing import Generator
 
-from .conf import ACCEPTABLE_COINS, SELECTIONS, PRICES, PRODUCTS, CURRENCY
+from .conf import COINS, VALUES, PRODUCTS, CURRENCY, PRICE_POINTS, BUTTONS
 
 
 @cache
 def check_coin(coin: str) -> int:
-    return ACCEPTABLE_COINS.get(coin, 0)
+    value = 0
+    for i, c in enumerate(COINS):
+        if c == coin:
+            value = VALUES[i]
+    return value
 
 
 @cache
 def get_product_by_button(button: str) -> str | None:
-    return SELECTIONS.get(button, None)
+    product = None
+    for i, b in enumerate(BUTTONS):
+        if b == button:
+            product = PRODUCTS[i]
+            break
+    return product
 
 
 @cache
 def get_price_by_product(product: str) -> int:
-    return PRICES.get(product, 0)
+    price = 0
+    for i, p in enumerate(PRODUCTS):
+        if p == product:
+            price = PRICE_POINTS[i]
+            break
+    return price
+
+
+@cache
+def get_coin_value(coin: str) -> int:
+    value = 0
+    for i, c in enumerate(COINS):
+        if c == coin:
+            value = VALUES[i]
+            break
+    return value
+
+
+@cache
+def get_coin_by_value(value: int) -> str | None:
+    coin = None
+    for i, v in enumerate(VALUES):
+        if v == value:
+            coin = COINS[i]
+            break
+    return coin
 
 
 def get_all_products() -> Generator[str]:
@@ -24,20 +59,20 @@ def get_all_products() -> Generator[str]:
 
 
 def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
-    coin_by_descending_value = (coin[0] for coin in sorted(ACCEPTABLE_COINS.items(), reverse=True, key=lambda x: x[1]))
+    coin_by_descending_value = (item[0] for item in sorted(zip(COINS, VALUES), reverse=True, key=itemgetter(1)))
     coin = next(coin_by_descending_value)
-    value = ACCEPTABLE_COINS[coin]
+    value = get_coin_value(coin)
     while remaining > 0:
         if value <= remaining:
             yield coin
             remaining -= value
         else:
             coin = next(coin_by_descending_value)
-            value = ACCEPTABLE_COINS[coin]
+            value = get_coin_value(coin)
 
 
 def coin_sum(coins: list[str]) -> int:
-    return sum(ACCEPTABLE_COINS[coin] for coin in coins)
+    return sum(get_coin_value(coin) for coin in coins)
 
 
 def get_currency() -> str:
