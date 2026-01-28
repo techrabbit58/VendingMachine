@@ -19,16 +19,20 @@ def as_currency(pennies: int, prefix: str = "", divisor: int = 100, decimals: in
 class VendingMachine:
     """Vending Machine Simulator"""
     SOLD_OUT = -1
+    display: str
 
     def __init__(self) -> None:
         self.coin_buffer = dict.fromkeys(get_acceptable_coins(), 0)
+        self.coin_box = dict.fromkeys(get_acceptable_coins(), 1)
         self.coin_return: list[str] = []
         self.hopper: list[str] = []
         self.selected_product = None
         self.current_amount = 0
-        self.display = INSERT_COIN
         self.stock = {}
-        self.coin_box = dict.fromkeys(get_acceptable_coins(), 0)
+        self.reset_display()
+
+    def reset_display(self) -> None:
+        self.display = INSERT_COIN if all((count for count in self.coin_box.values())) else EXACT_CHANGE_ONLY
 
     def insert_coin(self, coin: str) -> None:
         if value := check_coin(coin):
@@ -79,8 +83,9 @@ class VendingMachine:
             self.display = as_currency(price, prefix=PRICE)
         elif coin_sum(self.coin_buffer) > 0:
             self.display = as_currency(self.current_amount)
+        elif any((count == 0 for count in self.coin_box.values())):
+            self.display = EXACT_CHANGE_ONLY
         else:
-            # TODO: show EXACT CHANGE ONLY instead of INSERT COIN for the "exact change" feature
             self.display = INSERT_COIN
 
     def _dispense(self) -> None:
