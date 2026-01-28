@@ -5,6 +5,17 @@ from .lib import (
 )
 
 
+INSERT_COIN = "INSERT COIN"
+SOLD_OUT = "SOLD OUT"
+EXACT_CHANGE_ONLY = "EXACT CHANGE ONLY"
+THANK_YOU = "THANK YOU"
+PRICE = "PRICE "
+
+
+def as_currency(pennies: int, prefix: str = "", divisor: int = 100, decimals: int = 2) -> str:
+    return f"{prefix}{get_currency()}{pennies / divisor:.{decimals}f}"
+
+
 class VendingMachine:
     """Vending Machine Simulator"""
     SOLD_OUT = -1
@@ -15,7 +26,7 @@ class VendingMachine:
         self.hopper: list[str] = []
         self.selected_product = None
         self.current_amount = 0
-        self.display = "INSERT COIN"
+        self.display = INSERT_COIN
         self.stock = {}
         self.coin_box = dict.fromkeys(get_acceptable_coins(), 0)
 
@@ -61,16 +72,16 @@ class VendingMachine:
 
     def _update_display(self, price: int | None = None):
         if price is not None and price < 0:
-            self.display = "SOLD OUT"
+            self.display = SOLD_OUT
         elif price is not None and price == 0:
-            self.display = "THANK YOU"
+            self.display = THANK_YOU
         elif price is not None and price > 0:
-            self.display = f"PRICE {get_currency()}{price / 100:.2f}"
+            self.display = as_currency(price, prefix=PRICE)
         elif coin_sum(self.coin_buffer) > 0:
-            self.display = f"{get_currency()}{self.current_amount / 100:.2f}"
+            self.display = as_currency(self.current_amount)
         else:
             # TODO: show EXACT CHANGE ONLY instead of INSERT COIN for the "exact change" feature
-            self.display = "INSERT COIN"
+            self.display = INSERT_COIN
 
     def _dispense(self) -> None:
         self.hopper.append(self.selected_product)
