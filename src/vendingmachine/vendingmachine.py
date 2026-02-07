@@ -1,9 +1,12 @@
+import sys
+from pathlib import Path
+
 from .lib import (
     check_coin, get_product_by_button, get_price_by_product, coin_sum,
     fewest_coins_that_match_exact_amount, get_all_products, get_currency,
-    get_acceptable_coins
+    get_acceptable_coins, add_coin_boxes, coin_by_descending_value,
+    get_coin_value
 )
-
 
 INSERT_COIN = "INSERT COIN"
 SOLD_OUT = "SOLD OUT"
@@ -53,16 +56,43 @@ class VendingMachine:
         price = get_price_by_product(self.selected_product)
         self._update_display(price)
 
-        # TODO: do not dispense if the machine does not have enough coins in it's box and buffer
         if self.current_amount < price:
             self.selected_product = None
             return product
 
+        # TODO: do not dispense if the machine does not have enough coins in it's box and buffer
+        change = self._can_give_change(price)
+        if change < 0:
+            self.selected_product = None
+            self.return_coins()
+            return product
+
         self._dispense()
-        self._make_change(price)
+        self._make_change(change)
         self._collect_coins_from_buffer()
 
         return product
+
+    def _can_give_change(self, price: int) -> int:
+        all_coins = add_coin_boxes(self.coin_box, self.coin_buffer)
+        change = coin_sum(self.coin_buffer) - price
+        ordered_coins = coin_by_descending_value()
+        amount = 0
+        try:
+            current_coin = next(ordered_coins)
+            while amount <= change:
+                value = get_coin_value(current_coin)
+                while all_coins[current_coin] > 0 and amount + value <= change:
+                    amount += value
+                    all_coins[current_coin] -= 1
+                current_coin = next(ordered_coins)
+        except StopIteration:
+            pass
+        return change if amount == change else -1
+
+    def _make_change(self, change: int) -> None:
+        # TODO: change still infinite, must be updated for the "exact change" feature
+        self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
 
     def _collect_coins_from_buffer(self) -> None:
         for coin in self.coin_buffer:
@@ -94,12 +124,6 @@ class VendingMachine:
         self.selected_product = None
         self.current_amount = 0
         self._update_display(self.current_amount)
-
-    def _make_change(self, price: int) -> None:
-        change = coin_sum(self.coin_buffer) - price
-        if change > 0:
-            # TODO: change still infinite, must be updated for the "exact change" feature
-            self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
 
     def return_coins(self) -> None:
         self._return_coins_from_buffer()

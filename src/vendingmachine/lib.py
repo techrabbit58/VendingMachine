@@ -4,6 +4,8 @@ from typing import Generator
 
 from .conf import COINS, VALUES, PRODUCTS, CURRENCY, PRICES, BUTTONS
 
+type CoinBox = dict[str, int]
+
 
 @cache
 def check_coin(coin: str) -> int:
@@ -63,21 +65,32 @@ def get_acceptable_coins() -> Generator[str]:
 
 
 def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
-    coin_by_descending_value = (item[0] for item in sorted(zip(COINS, VALUES), reverse=True, key=itemgetter(1)))
-    coin = next(coin_by_descending_value)
+    ordered_coins = coin_by_descending_value()
+    coin = next(ordered_coins)
     value = get_coin_value(coin)
     while remaining > 0:
         if value <= remaining:
             yield coin
             remaining -= value
         else:
-            coin = next(coin_by_descending_value)
+            coin = next(ordered_coins)
             value = get_coin_value(coin)
 
 
-def coin_sum(coins: dict[str, int]) -> int:
+def coin_by_descending_value() -> Generator[str]:
+    return (item[0] for item in sorted(zip(COINS, VALUES), reverse=True, key=itemgetter(1)))
+
+
+def coin_sum(coins: CoinBox) -> int:
     return sum(get_coin_value(coin) * count for coin, count in coins.items())
 
 
 def get_currency() -> str:
     return CURRENCY
+
+
+def add_coin_boxes(this: CoinBox, other: CoinBox) -> CoinBox:
+    new_box = this.copy()
+    for coin in new_box:
+        new_box[coin] += other.get(coin, 0)
+    return new_box
