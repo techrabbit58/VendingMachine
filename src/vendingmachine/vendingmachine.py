@@ -1,6 +1,3 @@
-import sys
-from pathlib import Path
-
 from .lib import (
     check_coin, get_product_by_button, get_price_by_product, coin_sum,
     fewest_coins_that_match_exact_amount, get_all_products, get_currency,

@@ -1,18 +1,8 @@
 import pytest
 
-from .conf import BUTTONS, PRICES, VALUES
-from .lib import fewest_coins_that_match_exact_amount, coin_sum, get_coin_name_by_value
-
-
-def overpaid(price: int) -> dict[str, int]:
-    value = max(VALUES)
-    coin = get_coin_name_by_value(value)
-    coin_sequence = {coin: 0}
-    amount = 0
-    while amount <= price:
-        coin_sequence[coin] += 1
-        amount += value
-    return coin_sequence
+from .conf import BUTTONS, PRICES
+from .lib import fewest_coins_that_match_exact_amount, coin_sum
+from .lib_dev import overpaid
 
 
 @pytest.mark.parametrize("button, price", zip(BUTTONS, PRICES))
