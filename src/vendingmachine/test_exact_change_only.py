@@ -26,6 +26,7 @@ def test_machine_does_not_sell_if_exact_change_and_change_not_possible(
 
     v = empty_coin_box_vending_machine
     assert v.check_display() == "EXACT CHANGE ONLY"
+    assert not v.hopper, "vending machine hopper initially empty"
 
     coin_sequence = overpaid(price)
     for coin, count in coin_sequence.items():
@@ -37,4 +38,7 @@ def test_machine_does_not_sell_if_exact_change_and_change_not_possible(
 
     coins_inserted = (coin for coin, count in coin_sequence.items() for _ in range(count))
     assert sorted(v.coin_return) == sorted(coins_inserted)
+    assert not v.hopper, "vending machine hopper empty if no sale"
 
+
+# TODO: missing test: number of coins in buffer decreases due to giving change

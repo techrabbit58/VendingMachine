@@ -32,7 +32,8 @@ class VendingMachine:
         self.reset_display()
 
     def reset_display(self) -> None:
-        self.display = INSERT_COIN if all((count for count in self.coin_box.values())) else EXACT_CHANGE_ONLY
+        coin_box_has_every_coin = all((count for count in self.coin_box.values()))
+        self.display = INSERT_COIN if coin_box_has_every_coin else EXACT_CHANGE_ONLY
 
     def insert_coin(self, coin: str) -> None:
         if value := check_coin(coin):
@@ -45,7 +46,7 @@ class VendingMachine:
     def select_product(self, button: str) -> str | None:
         self.selected_product = product = get_product_by_button(button)
 
-        if self._is_sold_out(product):
+        if self._is_sold_out(product):  # selected product not available: do not sell
             self._update_display(self.SOLD_OUT)
             self.selected_product = None
             return None
@@ -53,19 +54,20 @@ class VendingMachine:
         price = get_price_by_product(self.selected_product)
         self._update_display(price)
 
-        if self.current_amount < price:
+        if self.current_amount < price:  # not enough coins: do not sell
             self.selected_product = None
             return product
 
         change = self._can_give_change(price)
-        if change < 0:
+        if change < 0:  # can not give change: do not sell, return coins
             self.selected_product = None
             self.return_coins()
             return product
 
+        # dispense only if enough coins where collected, and if change can be made
         self._dispense()
-        self._make_change(change)
         self._collect_coins_from_buffer()
+        self._make_change(change)
 
         return product
 
