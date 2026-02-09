@@ -33,3 +33,11 @@ def get_coin_name_by_value(value: int) -> str | None:
             coin = COINS[i]
             break
     return coin
+
+
+def overpayable_product_selections() -> list[tuple[str, int]]:
+    buttons_and_prices = []
+    for button, price in button_and_price():
+        if price > 0 and price % max_coin()[1] != 0:
+            buttons_and_prices.append((button, price))
+    return buttons_and_prices
