@@ -1,12 +1,12 @@
 import pytest
 
-from .vendingmachine import VendingMachine, restock_all, refill_money_box
+from .vendingmachine import VendingMachine, restock_products, refill_money_box
 
 
 @pytest.fixture
 def vending_machine() -> VendingMachine:
     v = VendingMachine()
-    restock_all(v, items_per_stock=1)
+    restock_products(v, items_per_stock=1)
     refill_money_box(v, items_per_coin=1)
     return v
 
@@ -21,7 +21,7 @@ def empty_vending_machine() -> VendingMachine:
 @pytest.fixture
 def empty_coin_box_vending_machine() -> VendingMachine:
     v = VendingMachine()
-    restock_all(v, items_per_stock=1)
+    restock_products(v, items_per_stock=1)
     for coin in v.coin_box:
         v.coin_box[coin] = 0
     return v

@@ -138,13 +138,13 @@ class VendingMachine:
         return self.stock.get(product, 0) == 0
 
 
-def restock_all(vending_machine: VendingMachine, items_per_stock: int = 10) -> None:
+def restock_products(vending_machine: VendingMachine, *, items_per_stock: int = 10) -> None:
     for product in get_all_products():
         vending_machine.stock[product] = items_per_stock
     vending_machine.reset_display()
 
 
-def refill_money_box(vending_machine: VendingMachine, items_per_coin: int = 10) -> None:
+def refill_money_box(vending_machine: VendingMachine, *, items_per_coin: int = 10) -> None:
     for coin in get_acceptable_coins():
         vending_machine.coin_box[coin] = items_per_coin
     vending_machine.reset_display()
