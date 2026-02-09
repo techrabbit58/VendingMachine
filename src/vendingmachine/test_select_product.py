@@ -2,8 +2,9 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import BUTTONS, CURRENCY, PRICES, PRODUCTS
+from .conf import BUTTONS, CURRENCY, PRODUCTS
 from .lib import fewest_coins_that_match_exact_amount, get_price_by_product, coin_sum
+from .lib_dev import button_and_price
 
 
 def valid_selections() -> Generator[tuple[str, str]]:
@@ -14,12 +15,6 @@ def valid_selections() -> Generator[tuple[str, str]]:
 def invalid_selections():
     yield "D"
     yield "invalid"
-
-
-def button_and_price() -> Generator[tuple[str, int]]:
-    for i, button in enumerate(BUTTONS):
-        price = PRICES[i]
-        yield button, price
 
 
 @pytest.mark.parametrize("button, product", valid_selections())

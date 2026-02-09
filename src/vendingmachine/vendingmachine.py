@@ -23,7 +23,7 @@ class VendingMachine:
 
     def __init__(self) -> None:
         self.coin_buffer = dict.fromkeys(get_acceptable_coins(), 0)
-        self.coin_box = dict.fromkeys(get_acceptable_coins(), 1)
+        self.coin_box = dict.fromkeys(get_acceptable_coins(), 0)
         self.coin_return: list[str] = []
         self.hopper: list[str] = []
         self.selected_product = None
@@ -57,7 +57,6 @@ class VendingMachine:
             self.selected_product = None
             return product
 
-        # TODO: do not dispense if the machine does not have enough coins in it's box and buffer
         change = self._can_give_change(price)
         if change < 0:
             self.selected_product = None
@@ -140,3 +139,10 @@ class VendingMachine:
 def restock_all(vending_machine: VendingMachine, items_per_stock: int = 10) -> None:
     for product in get_all_products():
         vending_machine.stock[product] = items_per_stock
+    vending_machine.reset_display()
+
+
+def refill_money_box(vending_machine: VendingMachine, items_per_coin: int = 10) -> None:
+    for coin in get_acceptable_coins():
+        vending_machine.coin_box[coin] = items_per_coin
+    vending_machine.reset_display()

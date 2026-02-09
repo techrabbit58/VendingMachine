@@ -46,16 +46,6 @@ def get_coin_value(coin: str) -> int:
     return value
 
 
-@cache
-def get_coin_name_by_value(value: int) -> str | None:
-    coin = None
-    for i, v in enumerate(VALUES):
-        if v == value:
-            coin = COINS[i]
-            break
-    return coin
-
-
 def get_all_products() -> Generator[str]:
     yield from PRODUCTS
 
