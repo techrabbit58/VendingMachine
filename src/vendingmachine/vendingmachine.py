@@ -4,7 +4,6 @@ from .lib import (
     get_acceptable_coins, add_coin_boxes, coin_by_descending_value,
     get_coin_value
 )
-from .lib_dev import fewest_coins_that_match_exact_amount
 
 INSERT_COIN = "INSERT COIN"
 SOLD_OUT = "SOLD OUT"
@@ -65,12 +64,35 @@ class VendingMachine:
             self.return_coins()
             return product
 
-        # dispense only if enough coins where collected, and if change can be made
+        # dispense, if enough payment, selected product available and if change can be made
         self._dispense()
         self._collect_coins_from_buffer()
         self._make_change(change)
 
         return product
+
+    def return_coins(self) -> None:
+        self._return_coins_from_buffer()
+        self.selected_product = None
+        self.current_amount = 0
+        self._update_display()
+
+    def check_display(self) -> str:
+        display = self.display
+        self._update_display()
+        return display
+
+    def _dispense(self) -> None:
+        self.hopper.append(self.selected_product)
+        self.stock[self.selected_product] -= 1
+        self.selected_product = None
+        self.current_amount = 0
+        self._update_display(self.current_amount)
+
+    def _collect_coins_from_buffer(self) -> None:
+        for coin in self.coin_buffer:
+            self.coin_box[coin] += self.coin_buffer[coin]
+            self.coin_buffer[coin] = 0
 
     def _can_give_change(self, price: int) -> int:
         all_coins = add_coin_boxes(self.coin_box, self.coin_buffer)
@@ -104,16 +126,6 @@ class VendingMachine:
                 value = get_coin_value(coin)
         self.coin_return.extend(coin_return)
 
-    def _collect_coins_from_buffer(self) -> None:
-        for coin in self.coin_buffer:
-            self.coin_box[coin] += self.coin_buffer[coin]
-            self.coin_buffer[coin] = 0
-
-    def check_display(self) -> str:
-        display = self.display
-        self._update_display()
-        return display
-
     def _update_display(self, price: int | None = None):
         if price is not None and price < 0:
             self.display = SOLD_OUT
@@ -127,19 +139,6 @@ class VendingMachine:
             self.display = EXACT_CHANGE_ONLY
         else:
             self.display = INSERT_COIN
-
-    def _dispense(self) -> None:
-        self.hopper.append(self.selected_product)
-        self.stock[self.selected_product] -= 1
-        self.selected_product = None
-        self.current_amount = 0
-        self._update_display(self.current_amount)
-
-    def return_coins(self) -> None:
-        self._return_coins_from_buffer()
-        self.selected_product = None
-        self.current_amount = 0
-        self._update_display()
 
     def _return_coins_from_buffer(self) -> None:
         for coin in self.coin_buffer:
