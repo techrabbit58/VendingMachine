@@ -1,7 +1,8 @@
 from functools import cache
 from typing import Generator
 
-from vendingmachine.conf import VALUES, BUTTONS, PRICES, COINS
+from .conf import VALUES, BUTTONS, PRICES, COINS
+from .lib import coin_by_descending_value, get_coin_value
 
 
 def overpaid(price: int) -> dict[str, int]:
@@ -41,3 +42,16 @@ def overpayable_product_selections() -> list[tuple[str, int]]:
         if price > 0 and price % max_coin()[1] != 0:
             buttons_and_prices.append((button, price))
     return buttons_and_prices
+
+
+def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
+    ordered_coins = coin_by_descending_value()
+    coin = next(ordered_coins)
+    value = get_coin_value(coin)
+    while remaining > 0:
+        if value <= remaining:
+            yield coin
+            remaining -= value
+        else:
+            coin = next(ordered_coins)
+            value = get_coin_value(coin)

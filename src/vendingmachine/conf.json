@@ -17,17 +17,17 @@
     {
       "name": "cola",
       "price": 100,
-      "button": "A"
+      "button": "P1"
     },
     {
       "name": "chips",
       "price": 50,
-      "button": "B"
+      "button": "P2"
     },
     {
       "name": "candy",
       "price": 65,
-      "button": "c"
+      "button": "P3"
     }
   ],
   "currency": "$"

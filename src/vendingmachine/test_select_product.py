@@ -3,8 +3,8 @@ from collections.abc import Generator
 import pytest
 
 from .conf import BUTTONS, CURRENCY, PRODUCTS
-from .lib import fewest_coins_that_match_exact_amount, get_price_by_product, coin_sum
-from .lib_dev import button_and_price
+from .lib import get_price_by_product, coin_sum, get_product_by_button
+from .lib_dev import button_and_price, fewest_coins_that_match_exact_amount
 
 
 def valid_selections() -> Generator[tuple[str, str]]:
@@ -90,3 +90,15 @@ def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_mach
     assert v.selected_product is None
     assert v.current_amount == 0
     assert coin_sum(v.coin_buffer) == 0
+
+
+@pytest.mark.parametrize("button, price", button_and_price())
+def test_machine_has_one_less_product_after_selling(vending_machine, button, price):
+    v = vending_machine
+    product = get_product_by_button(button)
+    initial_stock = v.stock[product]
+    coin_sequence = fewest_coins_that_match_exact_amount(price)
+    for coin in coin_sequence:
+        v.insert_coin(coin)
+    v.select_product(button)
+    assert v.stock[product] == initial_stock - 1, "one less product on stock after sale"

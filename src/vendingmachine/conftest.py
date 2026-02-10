@@ -6,15 +6,15 @@ from .vendingmachine import VendingMachine, restock_products, refill_money_box
 @pytest.fixture
 def vending_machine() -> VendingMachine:
     v = VendingMachine()
-    restock_products(v, items_per_stock=1)
-    refill_money_box(v, items_per_coin=1)
+    restock_products(v)
+    refill_money_box(v)
     return v
 
 
 @pytest.fixture
 def empty_vending_machine() -> VendingMachine:
     v = VendingMachine()
-    refill_money_box(v, items_per_coin=1)
+    refill_money_box(v)
     return v
 
 

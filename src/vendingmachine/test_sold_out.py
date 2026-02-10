@@ -2,9 +2,9 @@ import pytest
 
 from .conf import BUTTONS, CURRENCY
 from .lib import (
-    get_price_by_product, get_product_by_button,
-    fewest_coins_that_match_exact_amount
+    get_price_by_product, get_product_by_button
 )
+from .lib_dev import fewest_coins_that_match_exact_amount
 
 
 @pytest.mark.parametrize("button", BUTTONS)

@@ -54,19 +54,6 @@ def get_acceptable_coins() -> Generator[str]:
     yield from COINS
 
 
-def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
-    ordered_coins = coin_by_descending_value()
-    coin = next(ordered_coins)
-    value = get_coin_value(coin)
-    while remaining > 0:
-        if value <= remaining:
-            yield coin
-            remaining -= value
-        else:
-            coin = next(ordered_coins)
-            value = get_coin_value(coin)
-
-
 def coin_by_descending_value() -> Generator[str]:
     return (item[0] for item in sorted(zip(COINS, VALUES), reverse=True, key=itemgetter(1)))
 

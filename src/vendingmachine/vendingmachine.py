@@ -1,9 +1,10 @@
 from .lib import (
     check_coin, get_product_by_button, get_price_by_product, coin_sum,
-    fewest_coins_that_match_exact_amount, get_all_products, get_currency,
+    get_all_products, get_currency,
     get_acceptable_coins, add_coin_boxes, coin_by_descending_value,
     get_coin_value
 )
+from .lib_dev import fewest_coins_that_match_exact_amount
 
 INSERT_COIN = "INSERT COIN"
 SOLD_OUT = "SOLD OUT"
@@ -89,8 +90,19 @@ class VendingMachine:
         return change if amount == change else -1
 
     def _make_change(self, change: int) -> None:
-        # TODO: change still infinite, must be updated for the "exact change" feature
-        self.coin_return.extend(fewest_coins_that_match_exact_amount(change))
+        ordered_coins = coin_by_descending_value()
+        coin = next(ordered_coins)
+        value = get_coin_value(coin)
+        coin_return = []
+        while change > 0:
+            if value <= change and self.coin_box[coin] > 0:
+                coin_return.append(coin)
+                self.coin_box[coin] -= 1
+                change -= value
+            else:
+                coin = next(ordered_coins)
+                value = get_coin_value(coin)
+        self.coin_return.extend(coin_return)
 
     def _collect_coins_from_buffer(self) -> None:
         for coin in self.coin_buffer:
