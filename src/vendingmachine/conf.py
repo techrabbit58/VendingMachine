@@ -10,4 +10,10 @@ PRODUCTS = tuple(product["name"] for product in configuration["products"])
 PRICES = tuple(product["price"] for product in configuration["products"])
 BUTTONS = tuple(product["button"] for product in configuration["products"])
 
-CURRENCY = configuration["currency"]
+CURRENCY = configuration["strings"].get("currency", "$")
+
+INSERT_COIN = configuration["strings"].get("insert coin", "INSERT COIN")
+SOLD_OUT = configuration["strings"].get("sold out", "SOLD OUT")
+EXACT_CHANGE_ONLY = configuration["strings"].get("exact change only", "EXACT CHANGE ONLY")
+THANK_YOU = configuration["strings"].get("thank you", "THANK YOU")
+PRICE = configuration["strings"].get("price", "PRICE ")

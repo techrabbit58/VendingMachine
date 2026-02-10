@@ -30,5 +30,12 @@
       "button": "P3"
     }
   ],
-  "currency": "$"
+  "strings": {
+    "currency": "$",
+    "insert coin": "INSERT_COIN",
+    "sold out": "SOLD OUT",
+    "exact change only": "EXACT CHANGE ONLY",
+    "thank you": "THANK YOU",
+    "price": "PRICE "
+  }
 }

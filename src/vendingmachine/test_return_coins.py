@@ -1,4 +1,4 @@
-from .conf import COINS
+from .conf import COINS, INSERT_COIN
 
 
 def test_return_coins_on_return_button_pressed(vending_machine):
@@ -15,4 +15,4 @@ def test_return_coins_on_return_button_pressed(vending_machine):
     assert v.coin_return == returned_coins, "coins in coin return (final)"
     assert v.selected_product is None
     assert v.current_amount == 0
-    assert v.check_display() == "INSERT COIN"
+    assert v.check_display() == INSERT_COIN

@@ -55,3 +55,13 @@ def fewest_coins_that_match_exact_amount(remaining: int) -> Generator[str]:
         else:
             coin = next(ordered_coins)
             value = get_coin_value(coin)
+
+
+def valid_coins_and_values() -> Generator[tuple[str, int]]:
+    for i, coin in enumerate(COINS):
+        yield coin, VALUES[i]
+
+
+def invalid_coins() -> Generator[str]:
+    yield "quux"
+    yield "$@µ"

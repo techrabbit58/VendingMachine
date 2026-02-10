@@ -1,21 +1,11 @@
 import itertools
-from collections.abc import Generator
 
 import pytest
 
-from .conf import CURRENCY, COINS, VALUES
+from .conf import CURRENCY, COINS, INSERT_COIN
 from .conftest import vending_machine
 from .lib import coin_sum
-
-
-def valid_coins_and_values() -> Generator[tuple[str, int]]:
-    for i, coin in enumerate(COINS):
-        yield coin, VALUES[i]
-
-
-def invalid_coins() -> Generator[str]:
-    yield "penny"
-    yield "1cent"
+from .lib_dev import valid_coins_and_values, invalid_coins
 
 
 @pytest.mark.parametrize("actual_coin, expected_result", valid_coins_and_values())
@@ -41,13 +31,13 @@ def test_vending_machine_accumulates_inserted_coin_values(vending_machine, coins
 
 def test_idle_vending_machine_displays_INSERT_COIN(vending_machine):
     v = vending_machine
-    assert v.current_amount == 0 and v.display == "INSERT COIN"
+    assert v.current_amount == 0 and v.display == INSERT_COIN
 
 
 @pytest.mark.parametrize("actual_coin, expected_result", valid_coins_and_values())
 def test_insert_valid_coin_updates_display(vending_machine, actual_coin, expected_result):
     v = vending_machine
-    assert v.check_display() == "INSERT COIN"
+    assert v.check_display() == INSERT_COIN
     v.insert_coin(actual_coin)
     assert v.check_display() == f"{CURRENCY}{expected_result / 100:.2f}"
 

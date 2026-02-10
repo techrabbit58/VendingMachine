@@ -1,9 +1,7 @@
 import pytest
 
-from .conf import BUTTONS, CURRENCY
-from .lib import (
-    get_price_by_product, get_product_by_button
-)
+from .conf import BUTTONS, CURRENCY, INSERT_COIN, SOLD_OUT, PRICE
+from .lib import get_price_by_product, get_product_by_button
 from .lib_dev import fewest_coins_that_match_exact_amount
 
 
@@ -11,8 +9,8 @@ from .lib_dev import fewest_coins_that_match_exact_amount
 def test_machine_tells_SOLD_OUT_if_selected_product_not_in_stock(empty_vending_machine, button):
     v = empty_vending_machine
     v.select_product(button)
-    assert v.check_display() == "SOLD OUT"
-    assert v.check_display() == "INSERT COIN"
+    assert v.check_display() == SOLD_OUT
+    assert v.check_display() == INSERT_COIN
 
 
 @pytest.mark.parametrize("button", BUTTONS)
@@ -23,7 +21,7 @@ def test_machine_with_coins_tells_SOLD_OUT_if_selected_product_not_in_stock(empt
     for coin in fewest_coins_that_match_exact_amount(price):
         v.insert_coin(coin)
     v.select_product(button)
-    assert v.check_display() == "SOLD OUT"
+    assert v.check_display() == SOLD_OUT
     assert v.check_display() == f"{CURRENCY}{price / 100:.2f}"
 
 
@@ -33,10 +31,10 @@ def test_machine_allows_alternate_choice_if_out_of_stock(empty_vending_machine, 
     v.stock[get_product_by_button(button1)] = 0
     v.stock[get_product_by_button(button2)] = 1
     v.select_product(button1)
-    assert v.check_display() == "SOLD OUT"
+    assert v.check_display() == SOLD_OUT
     product = v.select_product(button2)
     price = get_price_by_product(product)
-    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
+    assert v.check_display() == f"{PRICE}{CURRENCY}{price / 100:.2f}"
 
 
 @pytest.mark.parametrize("button", BUTTONS)

@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 import pytest
 
-from .conf import BUTTONS, CURRENCY, PRODUCTS
+from .conf import BUTTONS, CURRENCY, PRODUCTS, INSERT_COIN, THANK_YOU, PRICE
 from .lib import get_price_by_product, coin_sum, get_product_by_button
 from .lib_dev import button_and_price, fewest_coins_that_match_exact_amount
 
@@ -35,7 +35,7 @@ def test_invalid_buttons_selects_None(vending_machine, button):
 def test_machine_displays_PRICE_for_selected_product(vending_machine, button, price):
     v = vending_machine
     v.select_product(button)
-    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
+    assert v.check_display() == f"{PRICE}{CURRENCY}{price / 100:.2f}"
 
 
 @pytest.mark.parametrize("button, price", button_and_price())
@@ -43,8 +43,8 @@ def test_mch_no_coins_reverts_to_INSERT_COIN_if_display_checked_multiple(vending
     v = vending_machine
     v.select_product(button)
     assert v.selected_product is None
-    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
-    assert v.check_display() == "INSERT COIN"
+    assert v.check_display() == f"{PRICE}{CURRENCY}{price / 100:.2f}"
+    assert v.check_display() == INSERT_COIN
 
 
 @pytest.mark.parametrize("button, price", button_and_price())
@@ -54,7 +54,7 @@ def test_mch_with_small_amount_reverts_to_previous_if_display_checked_multiple(v
     first_display = v.check_display()
     v.select_product(button)
     assert v.selected_product is None
-    assert v.check_display() == f"PRICE {CURRENCY}{price / 100:.2f}"
+    assert v.check_display() == f"{PRICE}{CURRENCY}{price / 100:.2f}"
     assert v.check_display() == first_display
 
 
@@ -62,8 +62,8 @@ def test_machine_display_changes_for_subsequent_selections(vending_machine):
     v = vending_machine
     for button in BUTTONS:
         product = v.select_product(button)
-        assert v.check_display() == f"PRICE {CURRENCY}{get_price_by_product(product) / 100:.2f}"
-    assert v.check_display() == "INSERT COIN"
+        assert v.check_display() == f"{PRICE}{CURRENCY}{get_price_by_product(product) / 100:.2f}"
+    assert v.check_display() == INSERT_COIN
 
 
 @pytest.mark.parametrize("button, price", button_and_price())
@@ -74,7 +74,7 @@ def test_machine_dispenses_selected_product_if_enough_coins(vending_machine, but
     for coin in coin_sequence:
         v.insert_coin(coin)
         v.select_product(button)
-    assert v.check_display() == "THANK YOU"
+    assert v.check_display() == THANK_YOU
     assert v.hopper == [product]
 
 
@@ -86,7 +86,7 @@ def test_machine_stores_payment_and_is_ready_for_next_after_selling(vending_mach
         v.insert_coin(coin)
     v.select_product(button)
     v.check_display()
-    assert v.check_display() == "INSERT COIN"
+    assert v.check_display() == INSERT_COIN
     assert v.selected_product is None
     assert v.current_amount == 0
     assert coin_sum(v.coin_buffer) == 0

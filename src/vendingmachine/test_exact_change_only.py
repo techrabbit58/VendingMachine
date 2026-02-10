@@ -1,6 +1,6 @@
 import pytest
 
-from .conf import COINS
+from .conf import COINS, EXACT_CHANGE_ONLY
 from .lib import get_coin_value, coin_sum, add_coin_boxes
 from .lib_dev import overpaid, overpayable_product_selections, fewest_coins_that_match_exact_amount
 
@@ -10,14 +10,14 @@ def test_machine_shows_EXACT_CHANGE_ONLY_if_no_coins_of_any_kind(vending_machine
     v = vending_machine
     v.coin_box[coin] = 0
     v.reset_display()
-    assert v.check_display() == "EXACT CHANGE ONLY"
+    assert v.check_display() == EXACT_CHANGE_ONLY
 
 
 @pytest.mark.parametrize("button, price", overpayable_product_selections())
 def test_machine_does_not_sell_if_exact_change_and_change_not_possible(
         empty_coin_box_vending_machine, button, price):
     v = empty_coin_box_vending_machine
-    assert v.check_display() == "EXACT CHANGE ONLY"
+    assert v.check_display() == EXACT_CHANGE_ONLY
     assert not v.hopper, "vending machine hopper initially empty"
 
     coin_sequence = overpaid(price)

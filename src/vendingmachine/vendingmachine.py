@@ -1,15 +1,10 @@
+from .conf import INSERT_COIN, SOLD_OUT, EXACT_CHANGE_ONLY, THANK_YOU, PRICE
 from .lib import (
     check_coin, get_product_by_button, get_price_by_product, coin_sum,
     get_all_products, get_currency,
     get_acceptable_coins, add_coin_boxes, coin_by_descending_value,
     get_coin_value
 )
-
-INSERT_COIN = "INSERT COIN"
-SOLD_OUT = "SOLD OUT"
-EXACT_CHANGE_ONLY = "EXACT CHANGE ONLY"
-THANK_YOU = "THANK YOU"
-PRICE = "PRICE "
 
 
 def as_currency(pennies: int, prefix: str = "", divisor: int = 100, decimals: int = 2) -> str:
