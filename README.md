@@ -9,6 +9,7 @@
   4. return coins :heavy_check_mark:
   5. sold out :heavy_check_mark:
   6. exact change only :heavy_check_mark:
+* Additional task: create a demo program. :heavy_check_mark:
 
 ## Reference
 * Find the original description here: [Guy Royse Vending Machine Kata](https://github.com/guyroyse/vending-machine-kata)
