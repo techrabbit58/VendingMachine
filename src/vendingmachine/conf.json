@@ -31,7 +31,7 @@
     }
   ],
   "strings": {
-    "currency": "EUR ",
+    "currency": "$",
     "insert coin": "INSERT_COIN",
     "sold out": "SOLD OUT",
     "exact change only": "EXACT CHANGE ONLY",
