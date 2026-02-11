@@ -115,6 +115,7 @@ class App(tk.Tk):
     def on_select_product(self, button: str) -> None:
         self.vending_machine.select_product(button)
         self._update_display()
+        # noinspection PyTypeChecker
         self.job_id.put(self.after(2000, self._update_display))
 
     def on_insert_coin(self, coin: str) -> None:
