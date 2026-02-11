@@ -135,11 +135,15 @@ class App(tk.Tk):
         self._update_display()
 
     def _update_display(self) -> None:
-        self.coin_return["text"] = textwrap.shorten(" ".join(self.vending_machine.coin_return).upper(), 40) or "Empty"
-        self.products["text"] = textwrap.shorten(" ".join(self.vending_machine.hopper).upper(), 40) or "Empty"
-        self.display["text"] = self.vending_machine.check_display()
         while self.job_id.qsize() > 0:
             self.after_cancel(self.job_id.get())
+        self.coin_return["text"] = textwrap.shorten(
+            " ".join(self.vending_machine.coin_return).upper(),
+            40) or "Empty"
+        self.products["text"] = textwrap.shorten(
+            " ".join(self.vending_machine.hopper).upper(),
+            40) or "Empty"
+        self.display["text"] = self.vending_machine.check_display()
 
     def run(self) -> None:
         self.mainloop()
