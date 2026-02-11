@@ -37,24 +37,22 @@ class App(tk.Tk):
 
         for button in BUTTONS:
             product = get_product_by_button(button)
-            b = Button(
+            Button(
                 button_area,
                 text=product.title(),
                 command=partial(self.on_select_product, button)
-            )
-            b.grid(sticky="n", column=1)
+            ).grid(sticky="n", column=1)
 
         coin_area = LabelFrame(self, text="Coins", borderwidth=5, labelanchor="n")
         coin_area.grid(column=1, row=0, padx=(5, 15), pady=10, ipady=5, sticky="nwse")
         columnconfigure(coin_area, columns=3)
 
         for coin in COINS:
-            c = Button(
+            Button(
                 coin_area,
                 text=coin.title(),
                 command=partial(self.on_insert_coin, coin)
-            )
-            c.grid(sticky="n", column=1)
+            ).grid(sticky="n", column=1)
 
         display_area = LabelFrame(self, text="Display", borderwidth=5, labelanchor="n")
         display_area.grid(
@@ -69,19 +67,17 @@ class App(tk.Tk):
             column=0, row=2, columnspan=2, padx=15, pady=(0, 5), ipady=5, sticky="we")
         columnconfigure(coin_return_area, columns=3)
 
-        self.coin_return_button = Button(
+        Button(
             coin_return_area,
             text="Return coins",
             command=self.on_return_coins
-        )
-        self.coin_return_button.grid(sticky="w", row=0, column=0)
+        ).grid(sticky="w", row=0, column=0)
 
-        self.takeout_coins_button = Button(
+        Button(
             coin_return_area,
             text="Take out",
             command=self.on_takeout_coins
-        )
-        self.takeout_coins_button.grid(sticky="w", row=1, column=0)
+        ).grid(sticky="w", row=1, column=0)
 
         self.coin_return = Label(coin_return_area, text="Empty")
         self.coin_return.grid(sticky="w", row=0, column=1, columnspan=2)
@@ -94,12 +90,11 @@ class App(tk.Tk):
         self.products = Label(self.hopper_area, text="Empty")
         self.products.grid(sticky="w", row=0, column=1, columnspan=2)
 
-        self.takeout_products_button = Button(
+        Button(
             self.hopper_area,
             text="Take out",
             command=self.on_takeout_products
-        )
-        self.takeout_products_button.grid(sticky="w", row=0, column=0)
+        ).grid(sticky="w", row=0, column=0)
 
         self.resizable(False, False)
 
