@@ -8,32 +8,41 @@ from .conf import BUTTONS, COINS
 from .lib import get_product_by_button
 from .vendingmachine import VendingMachine, restock_products, refill_money_box
 
+type Container = App | LabelFrame
 
-def columnconfigure(frame: LabelFrame, *, columns: int, weight: int = 1) -> None:
+
+def columnconfigure(frame: Container, *, columns: int, weight: int = 1) -> None:
     for n in range(columns):
         frame.columnconfigure(n, weight=weight)
+
+
+def new_vending_machine() -> VendingMachine:
+    v = VendingMachine()
+    restock_products(v)
+    refill_money_box(v)
+    return v
+
+
+def new_labelframe(text: str, *, parent: Container) -> LabelFrame:
+    f = LabelFrame(parent, text=text, borderwidth=5, labelanchor="n")
+    columnconfigure(f, columns=3)
+    return f
 
 
 class App(tk.Tk):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        v = VendingMachine()
-        restock_products(v)
-        refill_money_box(v)
-        self.vending_machine = v
-
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.minsize(400, 380)
+        self.vending_machine = new_vending_machine()
 
         self.title("Vending Machine")
+        self.minsize(400, 380)
+        columnconfigure(self, columns=2)
 
         self.job_id = Queue()
 
         button_area = LabelFrame(self, text="Products", borderwidth=5, labelanchor="n")
         button_area.grid(column=0, row=0, padx=(15, 5), pady=10, ipady=5, sticky="nwse")
-        columnconfigure(button_area, columns=3)
 
         for button in BUTTONS:
             product = get_product_by_button(button)
@@ -43,9 +52,8 @@ class App(tk.Tk):
                 command=partial(self.on_select_product, button)
             ).grid(sticky="n", column=1)
 
-        coin_area = LabelFrame(self, text="Coins", borderwidth=5, labelanchor="n")
+        coin_area = new_labelframe(parent=self, text="Coins")
         coin_area.grid(column=1, row=0, padx=(5, 15), pady=10, ipady=5, sticky="nwse")
-        columnconfigure(coin_area, columns=3)
 
         for coin in COINS:
             Button(
@@ -54,18 +62,16 @@ class App(tk.Tk):
                 command=partial(self.on_insert_coin, coin)
             ).grid(sticky="n", column=1)
 
-        display_area = LabelFrame(self, text="Display", borderwidth=5, labelanchor="n")
+        display_area = new_labelframe(parent=self, text="Display")
         display_area.grid(
-            column=0, row=1, columnspan=2, padx=15, pady=(0, 5), ipady=5, sticky="we")
-        columnconfigure(display_area, columns=3)
+            column=0, row=1, columnspan=2, padx=15, pady=(0, 5), ipady=5, sticky="nwse")
 
         self.display = Label(display_area, text=self.vending_machine.check_display())
         self.display.grid(sticky="n", columnspan=3, column=0)
 
-        coin_return_area = LabelFrame(self, text="Coin Return", borderwidth=5, labelanchor="n")
+        coin_return_area = new_labelframe(parent=self, text="Coin Return")
         coin_return_area.grid(
-            column=0, row=2, columnspan=2, padx=15, pady=(0, 5), ipady=5, sticky="we")
-        columnconfigure(coin_return_area, columns=3)
+            column=0, row=2, columnspan=2, padx=15, pady=(0, 5), ipady=5, sticky="nwse")
 
         Button(
             coin_return_area,
@@ -82,10 +88,9 @@ class App(tk.Tk):
         self.coin_return = Label(coin_return_area, text="Empty")
         self.coin_return.grid(sticky="w", row=0, column=1, columnspan=2)
 
-        self.hopper_area = LabelFrame(self, text="Hopper", borderwidth=5, labelanchor="n")
+        self.hopper_area = new_labelframe(parent=self, text="Hopper")
         self.hopper_area.grid(
-            column=0, row=3, columnspan=2, padx=15, pady=(0, 25), ipady=5, sticky="we")
-        columnconfigure(self.hopper_area, columns=3)
+            column=0, row=3, columnspan=2, padx=15, pady=(0, 25), ipady=5, sticky="nwse")
 
         self.products = Label(self.hopper_area, text="Empty")
         self.products.grid(sticky="w", row=0, column=1, columnspan=2)
